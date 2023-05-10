@@ -1,18 +1,13 @@
-# -*- coding: utf-8 -*-
-
 """Cloudwatch alarm action scheduler."""
 
-from typing import Dict, List
-
 import boto3
-
 from botocore.exceptions import ClientError
 
-from scheduler.exceptions import cloudwatch_exception
-from scheduler.filter_resources_by_tags import FilterByTags
+from scheduler.libs.filter_resources_by_tags import FilterByTags
+from scheduler.cloudwatch.exceptions import cloudwatch_exception
 
 
-class CloudWatchAlarmScheduler(object):
+class CloudWatchAlarmScheduler:
     """Abstract Cloudwatch alarm scheduler in a class."""
 
     def __init__(self, region_name=None) -> None:
@@ -23,7 +18,7 @@ class CloudWatchAlarmScheduler(object):
             self.cloudwatch = boto3.client("cloudwatch")
         self.tag_api = FilterByTags(region_name=region_name)
 
-    def stop(self, aws_tags: List[Dict]) -> None:
+    def stop(self, aws_tags: list[dict]) -> None:
         """Aws Cloudwatch alarm disable function.
 
         Disable Cloudwatch alarm with defined tags.
@@ -44,11 +39,11 @@ class CloudWatchAlarmScheduler(object):
             alarm_name = alarm_arn.split(":")[-1]
             try:
                 self.cloudwatch.disable_alarm_actions(AlarmNames=[alarm_name])
-                print("Disable Cloudwatch alarm {0}".format(alarm_name))
+                print(f"Disable Cloudwatch alarm {alarm_name}")
             except ClientError as exc:
                 cloudwatch_exception("cloudwatch alarm", alarm_name, exc)
 
-    def start(self, aws_tags: List[Dict]) -> None:
+    def start(self, aws_tags: list[dict]) -> None:
         """Aws Cloudwatch alarm enable function.
 
         Enable Cloudwatch alarm with defined tags.
@@ -69,6 +64,6 @@ class CloudWatchAlarmScheduler(object):
             alarm_name = alarm_arn.split(":")[-1]
             try:
                 self.cloudwatch.enable_alarm_actions(AlarmNames=[alarm_name])
-                print("Enable Cloudwatch alarm {0}".format(alarm_name))
+                print(f"Enable Cloudwatch alarm {alarm_name}")
             except ClientError as exc:
                 cloudwatch_exception("cloudwatch alarm", alarm_name, exc)

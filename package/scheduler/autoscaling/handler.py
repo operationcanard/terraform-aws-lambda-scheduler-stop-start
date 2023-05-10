@@ -1,18 +1,16 @@
-# -*- coding: utf-8 -*-
-
 """Autoscaling instances scheduler."""
 
-from typing import Dict, Iterator, List
+from typing import Dict, List
+from collections.abc import Iterator
 
 import boto3
-
 from botocore.exceptions import ClientError
 
-from scheduler.exceptions import ec2_exception
-from scheduler.waiters import AwsWaiters
+from scheduler.libs.waiters import AwsWaiters
+from scheduler.autoscaling.exceptions import ec2_exception
 
 
-class AutoscalingScheduler(object):
+class AutoscalingScheduler:
     """Abstract autoscaling scheduler in a class."""
 
     def __init__(self, region_name=None) -> None:
@@ -25,7 +23,7 @@ class AutoscalingScheduler(object):
             self.asg = boto3.client("autoscaling")
         self.waiter = AwsWaiters(region_name=region_name)
 
-    def stop(self, aws_tags: List[Dict]) -> None:
+    def stop(self, aws_tags: list[dict]) -> None:
         """Aws autoscaling suspend function.
 
         Suspend autoscaling group and stop its instances
@@ -51,7 +49,7 @@ class AutoscalingScheduler(object):
         for asg_name in asg_name_list:
             try:
                 self.asg.suspend_processes(AutoScalingGroupName=asg_name)
-                print("Suspend autoscaling group {0}".format(asg_name))
+                print(f"Suspend autoscaling group {asg_name}")
             except ClientError as exc:
                 ec2_exception("instance", asg_name, exc)
 
@@ -59,11 +57,11 @@ class AutoscalingScheduler(object):
         for instance_id in instance_id_list:
             try:
                 self.ec2.stop_instances(InstanceIds=[instance_id])
-                print("Stop autoscaling instances {0}".format(instance_id))
+                print(f"Stop autoscaling instances {instance_id}")
             except ClientError as exc:
                 ec2_exception("autoscaling group", instance_id, exc)
 
-    def start(self, aws_tags: List[Dict]) -> None:
+    def start(self, aws_tags: list[dict]) -> None:
         """Aws autoscaling resume function.
 
         Resume autoscaling group and start its instances
@@ -91,7 +89,7 @@ class AutoscalingScheduler(object):
         for instance_id in instance_id_list:
             try:
                 self.ec2.start_instances(InstanceIds=[instance_id])
-                print("Start autoscaling instances {0}".format(instance_id))
+                print(f"Start autoscaling instances {instance_id}")
             except ClientError as exc:
                 ec2_exception("instance", instance_id, exc)
             else:
@@ -102,11 +100,11 @@ class AutoscalingScheduler(object):
         for asg_name in asg_name_list:
             try:
                 self.asg.resume_processes(AutoScalingGroupName=asg_name)
-                print("Resume autoscaling group {0}".format(asg_name))
+                print(f"Resume autoscaling group {asg_name}")
             except ClientError as exc:
                 ec2_exception("autoscaling group", asg_name, exc)
 
-    def list_groups(self, tag_key: str, tag_value: str) -> List[str]:
+    def list_groups(self, tag_key: str, tag_value: str) -> list[str]:
         """Aws autoscaling list function.
 
         List name of all autoscaling groups with
@@ -130,7 +128,7 @@ class AutoscalingScheduler(object):
                         asg_name_list.append(group["AutoScalingGroupName"])
         return asg_name_list
 
-    def list_instances(self, asg_name_list: List[str]) -> Iterator[str]:
+    def list_instances(self, asg_name_list: list[str]) -> Iterator[str]:
         """Aws autoscaling instance list function.
 
         List name of all instances in the autoscaling groups

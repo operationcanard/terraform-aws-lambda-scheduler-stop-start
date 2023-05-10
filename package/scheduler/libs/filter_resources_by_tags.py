@@ -1,13 +1,11 @@
-# -*- coding: utf-8 -*-
-
 """Filter aws resouces with tags."""
 
-from typing import Iterator
+from collections.abc import Iterator
 
 import boto3
 
 
-class FilterByTags(object):
+class FilterByTags:
     """Abstract Filter aws resources by tags in a class."""
 
     def __init__(self, region_name=None) -> None:

@@ -1,18 +1,15 @@
-# -*- coding: utf-8 -*-
-
 """ecs service scheduler."""
 
 from typing import Dict, List
 
 import boto3
-
 from botocore.exceptions import ClientError
 
-from scheduler.exceptions import ecs_exception
-from scheduler.filter_resources_by_tags import FilterByTags
+from scheduler.libs.filter_resources_by_tags import FilterByTags
+from scheduler.ecs.exceptions import ecs_exception
 
 
-class EcsScheduler(object):
+class EcsScheduler:
     """Abstract ECS Service scheduler in a class."""
 
     def __init__(self, region_name=None) -> None:
@@ -23,7 +20,7 @@ class EcsScheduler(object):
             self.ecs = boto3.client("ecs")
         self.tag_api = FilterByTags(region_name=region_name)
 
-    def stop(self, aws_tags: List[Dict]) -> None:
+    def stop(self, aws_tags: list[dict]) -> None:
         """Aws ecs instance stop function.
 
         Stop ecs service with defined tags and disable its Cloudwatch
@@ -49,14 +46,12 @@ class EcsScheduler(object):
                     cluster=cluster_name, service=service_name, desiredCount=0
                 )
                 print(
-                    "Stop ECS Service {0} on Cluster {1}".format(
-                        service_name, cluster_name
-                    )
+                    f"Stop ECS Service {service_name} on Cluster {cluster_name}"
                 )
             except ClientError as exc:
                 ecs_exception("ECS Service", service_name, exc)
 
-    def start(self, aws_tags: List[Dict]) -> None:
+    def start(self, aws_tags: list[dict]) -> None:
         """Aws ec2 instance start function.
 
         Start ec2 instances with defined tags.
@@ -81,9 +76,7 @@ class EcsScheduler(object):
                     cluster=cluster_name, service=service_name, desiredCount=1
                 )
                 print(
-                    "Start ECS Service {0} on Cluster {1}".format(
-                        service_name, cluster_name
-                    )
+                    f"Start ECS Service {service_name} on Cluster {cluster_name}"
                 )
             except ClientError as exc:
                 ecs_exception("ECS Service", service_name, exc)

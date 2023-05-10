@@ -9,8 +9,8 @@ from moto import (
     mock_resourcegroupstaggingapi,
 )
 
-from package.scheduler.filter_resources_by_tags import FilterByTags
-from package.scheduler.instance_handler import InstanceScheduler
+from package.scheduler.libs.filter_resources_by_tags import FilterByTags
+from package.scheduler.ec2.handler import InstanceScheduler
 
 from .utils import launch_ec2_instances
 

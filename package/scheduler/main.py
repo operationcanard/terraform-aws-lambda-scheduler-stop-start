@@ -1,14 +1,12 @@
-# -*- coding: utf-8 -*-
-
 """This script stop and start aws resources."""
 import os
 from distutils.util import strtobool
 
-from scheduler.autoscaling_handler import AutoscalingScheduler
-from scheduler.cloudwatch_handler import CloudWatchAlarmScheduler
-from scheduler.ecs_handler import EcsScheduler
-from scheduler.instance_handler import InstanceScheduler
-from scheduler.rds_handler import RdsScheduler
+from autoscaling.handler import AutoscalingScheduler
+from cloudwatch.handler import CloudWatchAlarmScheduler
+from ec2.handler import InstanceScheduler
+from ecs.handler import EcsScheduler
+from rds.handler import RdsScheduler
 
 
 def lambda_handler(event, context):

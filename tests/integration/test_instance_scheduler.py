@@ -4,8 +4,8 @@
 
 import boto3
 
-from package.scheduler.cloudwatch_handler import CloudWatchAlarmScheduler
-from package.scheduler.instance_handler import InstanceScheduler
+from package.scheduler.cloudwatch.handler import CloudWatchAlarmScheduler
+from package.scheduler.ec2.handler import InstanceScheduler
 
 from .fixture import launch_ec2_instances
 

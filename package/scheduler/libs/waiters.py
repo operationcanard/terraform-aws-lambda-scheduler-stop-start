@@ -1,17 +1,13 @@
-# -*- coding: utf-8 -*-
-
 """Autoscaling instances scheduler."""
 
 from typing import List
 
 import boto3
-
 from botocore.exceptions import ClientError
-
 from scheduler.exceptions import ec2_exception
 
 
-class AwsWaiters(object):
+class AwsWaiters:
     """Abstract aws waiter in a class."""
 
     def __init__(self, region_name=None) -> None:
@@ -21,7 +17,7 @@ class AwsWaiters(object):
         else:
             self.ec2 = boto3.client("ec2")
 
-    def instance_running(self, instance_ids: List[str]) -> None:
+    def instance_running(self, instance_ids: list[str]) -> None:
         """Aws waiter for instance running.
 
         Wait ec2 instances are in running state.
@@ -30,11 +26,11 @@ class AwsWaiters(object):
             The instance IDs to wait.
         """
         if instance_ids:
+            instance_waiter = self.ec2.get_waiter("instance_running")
             try:
-                instance_waiter = self.ec2.get_waiter("instance_running")
                 instance_waiter.wait(
                     InstanceIds=instance_ids,
-                    WaiterConfig={"Delay": 15, "MaxAttempts": 15},
+                    WaiterConfig={"Delay": 60, "MaxAttempts": 5},
                 )
             except ClientError as exc:
                 ec2_exception("waiter", instance_waiter, exc)

@@ -1,18 +1,15 @@
-# -*- coding: utf-8 -*-
-
 """ec2 instances scheduler."""
 
 from typing import Dict, List
 
 import boto3
-
 from botocore.exceptions import ClientError
 
-from scheduler.exceptions import ec2_exception
-from scheduler.filter_resources_by_tags import FilterByTags
+from scheduler.libs.filter_resources_by_tags import FilterByTags
+from scheduler.ec2.exceptions import ec2_exception
 
 
-class InstanceScheduler(object):
+class InstanceScheduler:
     """Abstract ec2 scheduler in a class."""
 
     def __init__(self, region_name=None) -> None:
@@ -25,7 +22,7 @@ class InstanceScheduler(object):
             self.asg = boto3.client("autoscaling")
         self.tag_api = FilterByTags(region_name=region_name)
 
-    def stop(self, aws_tags: List[Dict]) -> None:
+    def stop(self, aws_tags: list[dict]) -> None:
         """Aws ec2 instance stop function.
 
         Stop ec2 instances with defined tags and disable its Cloudwatch
@@ -47,14 +44,14 @@ class InstanceScheduler(object):
             instance_id = instance_arn.split("/")[-1]
             try:
                 if not self.asg.describe_auto_scaling_instances(
-                    InstanceIds=[instance_id]
+                        InstanceIds=[instance_id]
                 )["AutoScalingInstances"]:
                     self.ec2.stop_instances(InstanceIds=[instance_id])
-                    print("Stop instances {0}".format(instance_id))
+                    print(f"Stop instances {instance_id}")
             except ClientError as exc:
                 ec2_exception("instance", instance_id, exc)
 
-    def start(self, aws_tags: List[Dict]) -> None:
+    def start(self, aws_tags: list[dict]) -> None:
         """Aws ec2 instance start function.
 
         Start ec2 instances with defined tags.
@@ -75,9 +72,9 @@ class InstanceScheduler(object):
             instance_id = instance_arn.split("/")[-1]
             try:
                 if not self.asg.describe_auto_scaling_instances(
-                    InstanceIds=[instance_id]
+                        InstanceIds=[instance_id]
                 )["AutoScalingInstances"]:
                     self.ec2.start_instances(InstanceIds=[instance_id])
-                    print("Start instances {0}".format(instance_id))
+                    print(f"Start instances {instance_id}")
             except ClientError as exc:
                 ec2_exception("instance", instance_id, exc)
