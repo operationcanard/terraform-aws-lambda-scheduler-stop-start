@@ -3,9 +3,10 @@
 """Exception function for all aws scheduler."""
 
 import logging
+from botocore.exceptions import ClientError
 
 
-def ec2_exception(resource_name: str, resource_id: str, exception) -> None:
+def ec2_exception(resource_name: str, resource_id: str, exception: ClientError) -> None:
     """Exception raised during execution of ec2 scheduler.
 
     Log instance, spot instance and autoscaling groups exceptions
@@ -16,7 +17,7 @@ def ec2_exception(resource_name: str, resource_id: str, exception) -> None:
     :param str resource_id:
         Aws resource id
     :param str exception:
-        Human readable string describing the exception
+        Human-readable string describing the exception
     """
     info_codes = ["IncorrectInstanceState"]
     warning_codes = [
@@ -48,7 +49,7 @@ def ec2_exception(resource_name: str, resource_id: str, exception) -> None:
         )
 
 
-def ecs_exception(resource_name: str, resource_id: str, exception) -> None:
+def ecs_exception(resource_name: str, resource_id: str, exception: ClientError) -> None:
     """Exception raised during execution of ecs scheduler.
 
     Log instance, spot instance and autoscaling groups exceptions
@@ -59,7 +60,7 @@ def ecs_exception(resource_name: str, resource_id: str, exception) -> None:
     :param str resource_id:
         Aws resource id
     :param str exception:
-        Human readable string describing the exception
+        Human-readable string describing the exception
     """
     info_codes = ["ClusterNotFoundException"]
     warning_codes = [
@@ -91,7 +92,7 @@ def ecs_exception(resource_name: str, resource_id: str, exception) -> None:
         )
 
 
-def rds_exception(resource_name: str, resource_id: str, exception) -> None:
+def rds_exception(resource_name: str, resource_id: str, exception: ClientError) -> None:
     """Exception raised during execution of rds scheduler.
 
     Log rds exceptions on the specific aws resources.
@@ -101,7 +102,7 @@ def rds_exception(resource_name: str, resource_id: str, exception) -> None:
     :param str resource_id:
         Aws resource id
     :param str exception:
-        Human readable string describing the exception
+        Human-readable string describing the exception
     """
     info_codes = ["InvalidParameterCombination", "DBClusterNotFoundFault"]
     warning_codes = ["InvalidDBClusterStateFault", "InvalidDBInstanceState"]
@@ -129,7 +130,7 @@ def rds_exception(resource_name: str, resource_id: str, exception) -> None:
         )
 
 
-def cloudwatch_exception(resource_name: str, resource_id: str, exception):
+def cloudwatch_exception(resource_name: str, resource_id: str, exception: ClientError):
     """Exception raised during execution of Cloudwatch scheduler.
 
     Log Cloudwatch exceptions on the specific aws resources.
@@ -139,7 +140,7 @@ def cloudwatch_exception(resource_name: str, resource_id: str, exception):
     :param str resource_id:
         Aws resource id
     :param str exception:
-        Human readable string describing the exception
+        Human-readable string describing the exception
     """
     logging.error(
         "Unexpected error on %s %s: %s",
