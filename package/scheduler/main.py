@@ -1,6 +1,11 @@
 """This script stop and start aws resources."""
+import json
+import logging
 import os
 from distutils.util import strtobool
+
+from python_libs.package import requests
+from python_libs.package import validators
 
 from autoscaling.handler import AutoscalingScheduler
 from cloudwatch.handler import CloudWatchAlarmScheduler
@@ -28,6 +33,23 @@ def lambda_handler(event, context):
     aws_regions = os.getenv("AWS_REGIONS").replace(" ", "").split(",")
     format_tags = [{"Key": os.getenv("TAG_KEY"), "Values": [os.getenv("TAG_VALUE")]}]
 
+    exclude_ec2_ids = []
+
+    if os.getenv("EXCLUDE_EC2_IDS_FROM_URL", None) and validators.url(os.getenv("EXCLUDE_EC2_IDS_FROM_URL")):
+        req = requests.get(url=os.getenv("EXCLUDE_EC2_IDS"), timeout=5)
+        if req.status_code == 200:
+            to_exclude_from_url = req.json()
+            exclude_ec2_ids += to_exclude_from_url
+        else:
+            logging.error(f"Invalid url response from {os.getenv('EXCLUDE_EC2_IDS')}: HTTP {req.status_code}")
+
+    if os.getenv("EXCLUDE_EC2_IDS"):
+        try:
+            to_exclude_statics = os.getenv("EXCLUDE_EC2_IDS").replace(" ", "").split(",")
+            exclude_ec2_ids += to_exclude_statics
+        except Exception as err:
+            logging.error(f"Invalid json answer: {err}")
+
     _strategy = {}
     _strategy[AutoscalingScheduler] = os.getenv("AUTOSCALING_SCHEDULE")
     _strategy[InstanceScheduler] = os.getenv("EC2_SCHEDULE")
@@ -39,4 +61,4 @@ def lambda_handler(event, context):
         if strtobool(to_schedule):
             for aws_region in aws_regions:
                 strategy = service(aws_region)
-                getattr(strategy, schedule_action)(aws_tags=format_tags)
+                getattr(strategy, schedule_action)(aws_tags=format_tags, to_exclude=exclude_ec2_ids)

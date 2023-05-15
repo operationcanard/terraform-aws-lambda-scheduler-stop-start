@@ -55,6 +55,18 @@ variable "scheduler_tag" {
   }
 }
 
+variable "scheduler_exclude_ec2_ids" {
+  description = "List of instance IDS to exclude temporary of the schedule"
+  type        = list(string)
+  default     = null
+}
+
+variable "scheduler_exclude_ec2_ids_from_url" {
+  description = "URL giving the list of instance IDs to exclude temporary of the schedule"
+  type        = string
+  default     = null
+}
+
 variable "autoscaling_schedule" {
   description = "Enable scheduling on autoscaling resources"
   type        = any
@@ -81,7 +93,7 @@ variable "rds_schedule" {
 }
 
 variable "cloudwatch_alarm_schedule" {
-  description = "Enable scheduleding on cloudwatch alarm resources"
+  description = "Enable scheduling on cloudwatch alarm resources"
   type        = any
   default     = false
 }

@@ -22,7 +22,7 @@ class InstanceScheduler:
             self.asg = boto3.client("autoscaling")
         self.tag_api = FilterByTags(region_name=region_name)
 
-    def stop(self, aws_tags: list[dict]) -> None:
+    def stop(self, aws_tags: list[dict], to_exclude=None) -> None:
         """Aws ec2 instance stop function.
 
         Stop ec2 instances with defined tags and disable its Cloudwatch
@@ -40,8 +40,15 @@ class InstanceScheduler:
                 }
             ]
         """
+        if to_exclude is None:
+            to_exclude = []
+
         for instance_arn in self.tag_api.get_resources("ec2:instance", aws_tags):
             instance_id = instance_arn.split("/")[-1]
+
+            if instance_id in to_exclude:
+                continue
+
             try:
                 if not self.asg.describe_auto_scaling_instances(
                         InstanceIds=[instance_id]
@@ -51,7 +58,7 @@ class InstanceScheduler:
             except ClientError as exc:
                 ec2_exception("instance", instance_id, exc)
 
-    def start(self, aws_tags: list[dict]) -> None:
+    def start(self, aws_tags: list[dict], to_exclude=None) -> None:
         """Aws ec2 instance start function.
 
         Start ec2 instances with defined tags.
@@ -68,8 +75,15 @@ class InstanceScheduler:
                 }
             ]
         """
+        if to_exclude is None:
+            to_exclude = []
+
         for instance_arn in self.tag_api.get_resources("ec2:instance", aws_tags):
             instance_id = instance_arn.split("/")[-1]
+
+            if instance_id in to_exclude:
+                continue
+
             try:
                 if not self.asg.describe_auto_scaling_instances(
                         InstanceIds=[instance_id]

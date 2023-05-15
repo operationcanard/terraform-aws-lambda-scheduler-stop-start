@@ -240,6 +240,7 @@ locals {
   }
   # Backward compatibility with the former scheduler variable name.
   scheduler_tag = var.resources_tag == null ? var.scheduler_tag : var.resources_tag
+
 }
 
 ################################################
@@ -271,6 +272,8 @@ resource "aws_lambda_function" "this" {
       SCHEDULE_ACTION           = var.schedule_action
       TAG_KEY                   = local.scheduler_tag["key"]
       TAG_VALUE                 = local.scheduler_tag["value"]
+      EXCLUDE_EC2_IDS           = join(", ", var.scheduler_exclude_ec2_ids)
+      EXCLUDE_EC2_IDS_FROM_URL  = var.scheduler_exclude_ec2_ids_from_url
       EC2_SCHEDULE              = tostring(var.ec2_schedule)
       ECS_SCHEDULE              = tostring(var.ecs_schedule)
       RDS_SCHEDULE              = tostring(var.rds_schedule)
