@@ -6,8 +6,8 @@ import boto3
 
 from moto import mock_autoscaling, mock_cloudwatch, mock_ec2
 
-from package.scheduler.autoscaling.handler import AutoscalingScheduler
-from package.scheduler.cloudwatch.handler import CloudWatchAlarmScheduler
+from src.scheduler.autoscaling.handler import AutoscalingScheduler
+from src.scheduler.cloudwatch.handler import CloudWatchAlarmScheduler
 
 from .utils import launch_asg
 

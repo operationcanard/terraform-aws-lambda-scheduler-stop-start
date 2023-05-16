@@ -4,8 +4,8 @@
 
 import boto3
 
-from package.scheduler.cloudwatch.handler import CloudWatchAlarmScheduler
-from package.scheduler.rds.handler import RdsScheduler
+from src.scheduler.cloudwatch.handler import CloudWatchAlarmScheduler
+from src.scheduler.rds.handler import RdsScheduler
 
 from .fixture import (
     launch_rds_instance,

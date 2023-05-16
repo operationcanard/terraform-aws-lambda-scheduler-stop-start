@@ -252,7 +252,7 @@ locals {
 # Convert *.py to .zip because AWS Lambda need .zip
 data "archive_file" "this" {
   type        = "zip"
-  source_dir  = "${path.module}/package/"
+  source_dir  = "${path.module}/src/"
   output_path = "${path.module}/aws-stop-start-resources-3.1.3.zip" # The version should match with the latest git tag
 }
 
@@ -262,7 +262,7 @@ resource "aws_lambda_function" "this" {
   function_name = var.name
   role          = var.custom_iam_role_arn == null ? aws_iam_role.this[0].arn : var.custom_iam_role_arn
   handler       = "scheduler.main.lambda_handler"
-  runtime       = "python3.7"
+  runtime       = "python3.9"
   timeout       = "600"
   kms_key_arn   = var.kms_key_arn == null ? "" : var.kms_key_arn
 

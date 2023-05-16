@@ -11,8 +11,8 @@ from moto import (
     mock_resourcegroupstaggingapi,
 )
 
-from package.scheduler.cloudwatch.handler import CloudWatchAlarmScheduler
-from package.scheduler.ec2.handler import InstanceScheduler
+from src.scheduler.cloudwatch.handler import CloudWatchAlarmScheduler
+from src.scheduler.ec2.handler import InstanceScheduler
 
 from .utils import launch_asg, launch_ec2_instances
 

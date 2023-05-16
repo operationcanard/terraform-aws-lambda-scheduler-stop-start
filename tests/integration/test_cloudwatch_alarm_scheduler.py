@@ -4,7 +4,7 @@
 
 import boto3
 
-from package.scheduler.cloudwatch.handler import CloudWatchAlarmScheduler
+from src.scheduler.cloudwatch.handler import CloudWatchAlarmScheduler
 
 from .fixture import create_cloudwatch_alarm
 

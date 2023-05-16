@@ -6,8 +6,8 @@ import boto3
 import time
 from random import randint
 
-from package.scheduler.autoscaling.handler import AutoscalingScheduler
-from package.scheduler.cloudwatch.handler import CloudWatchAlarmScheduler
+from src.scheduler.autoscaling.handler import AutoscalingScheduler
+from src.scheduler.cloudwatch.handler import CloudWatchAlarmScheduler
 
 from .fixture import launch_asg
 
