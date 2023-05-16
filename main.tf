@@ -272,13 +272,16 @@ resource "aws_lambda_function" "this" {
       SCHEDULE_ACTION           = var.schedule_action
       TAG_KEY                   = local.scheduler_tag["key"]
       TAG_VALUE                 = local.scheduler_tag["value"]
-      EXCLUDE_EC2_IDS           = join(", ", var.scheduler_exclude_ec2_ids)
-      EXCLUDE_EC2_IDS_FROM_URL  = var.scheduler_exclude_ec2_ids_from_url
+
       EC2_SCHEDULE              = tostring(var.ec2_schedule)
       ECS_SCHEDULE              = tostring(var.ecs_schedule)
       RDS_SCHEDULE              = tostring(var.rds_schedule)
       AUTOSCALING_SCHEDULE      = tostring(var.autoscaling_schedule)
       CLOUDWATCH_ALARM_SCHEDULE = tostring(var.cloudwatch_alarm_schedule)
+
+      EXCLUDE_EC2_IDS_STATICS               = join(", ", var.scheduler_exclude_ec2_ids)
+      EXCLUDE_EC2_IDS_FROM_URL              = var.scheduler_exclude_ec2_ids_from_url
+      EXCLUDE_EC2_IDS_FROM_SECRETS_MANAGER  = var.scheduler_exclude_ec2_ids_from_secrets_manager
     }
   }
 
@@ -320,4 +323,57 @@ resource "aws_cloudwatch_log_group" "this" {
   name              = "/aws/lambda/${var.name}"
   retention_in_days = 14
   tags              = var.tags
+}
+
+################################################
+#
+#        SECRET MANAGER FOR EXCEPTIONS
+#
+################################################
+
+resource "aws_secretsmanager_secret" "ec2_schedule_exceptions" {
+  name        = var.scheduler_exclude_ec2_ids_from_secrets_manager
+  description = "Exception list for EC2 scheduled."
+}
+
+resource "aws_secretsmanager_secret_policy" "ec2_schedule_exceptions" {
+  secret_arn = aws_secretsmanager_secret.ec2_schedule_exceptions.arn
+  policy     = data.aws_iam_policy_document.ec2_schedule_exceptions.json
+}
+
+data "aws_iam_policy_document" "ec2_schedule_exceptions" {
+
+  statement {
+    sid    = "ReadFromLambda"
+    effect = "Allow"
+
+    actions = [
+      "secretsmanager:GetSecretValue",
+    ]
+
+    principals {
+      type        = "Service"
+      identifiers = ["lambda.amazonaws.com"]
+    }
+
+    resources = [aws_secretsmanager_secret.ec2_schedule_exceptions.arn]
+  }
+
+  statement {
+    sid    = "ReadWriteAccessFromTeam"
+    effect = "Allow"
+
+    actions = [
+      "secretsmanager:GetSecretValue",
+      "secretsmanager:DescribeSecret",
+      "secretsmanager:PutSecretValue",
+    ]
+
+    principals {
+      type        = "AWS"
+      identifiers = var.aws_accounts_arn
+    }
+
+    resources = [aws_secretsmanager_secret.ec2_schedule_exceptions.arn]
+  }
 }
