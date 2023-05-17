@@ -67,6 +67,12 @@ variable "scheduler_exclude_ec2_ids_from_url" {
   default     = null
 }
 
+variable "scheduler_exclude_ec2_ids_from_secrets_manager" {
+  description = "Secret name with IDs to exclude temporary of the schedule"
+  type        = string
+  default     = "ec2-scheduler-exceptions"
+}
+
 variable "autoscaling_schedule" {
   description = "Enable scheduling on autoscaling resources"
   type        = any
@@ -102,4 +108,10 @@ variable "tags" {
   description = "Custom tags on aws resources"
   type        = map(any)
   default     = null
+}
+
+variable "aws_accounts_arn" {
+  description = "List of the accounts arn authorized to see & edit exceptions"
+  type        = list(string)
+  default     = []
 }
