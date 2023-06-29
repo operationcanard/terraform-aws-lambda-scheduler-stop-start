@@ -250,11 +250,20 @@ locals {
 #
 ################################################
 
+resource "null_resource" "move_directory" {
+  provisioner "local-exec" {
+   command = "mv ${path.module}/src/package/* ${path.module}/src/scheduler/ 2>/dev/null; true"
+  }
+}
+
 # Convert *.py to .zip because AWS Lambda need .zip
 data "archive_file" "this" {
   type        = "zip"
+  output_path = "${path.module}/aws-stop-start-resources-3.1.3.zip"
   source_dir  = "${path.module}/src/"
-  output_path = "${path.module}/aws-stop-start-resources-3.1.3.zip" # The version should match with the latest git tag
+  depends_on = [
+    null_resource.move_directory
+  ]
 }
 
 # Create Lambda function for stop or start aws resources
