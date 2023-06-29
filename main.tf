@@ -282,7 +282,7 @@ resource "aws_lambda_function" "this" {
 
       EXCLUDE_EC2_IDS_STATICS               = join(", ", var.scheduler_exclude_ec2_ids)
       EXCLUDE_EC2_IDS_FROM_URL              = var.scheduler_exclude_ec2_ids_from_url
-      EXCLUDE_EC2_IDS_FROM_SECRETS_MANAGER  = var.scheduler_exclude_ec2_ids_from_secrets_manager
+      # EXCLUDE_EC2_IDS_FROM_SECRETS_MANAGER  = var.scheduler_exclude_ec2_ids_from_secrets_manager
     }
   }
 
@@ -332,51 +332,51 @@ resource "aws_cloudwatch_log_group" "this" {
 #
 ################################################
 
-resource "aws_secretsmanager_secret" "ec2_schedule_exceptions" {
-  name        = var.scheduler_exclude_ec2_ids_from_secrets_manager
-  description = "Exception list for EC2 scheduled."
-}
-
-resource "aws_secretsmanager_secret_policy" "ec2_schedule_exceptions" {
-  secret_arn = aws_secretsmanager_secret.ec2_schedule_exceptions.arn
-  policy     = data.aws_iam_policy_document.ec2_schedule_exceptions.json
-}
-
-data "aws_iam_policy_document" "ec2_schedule_exceptions" {
-
-  statement {
-    sid    = "ReadFromLambda"
-    effect = "Allow"
-
-    actions = [
-      "secretsmanager:GetSecretValue",
-    ]
-
-    principals {
-      type        = "Service"
-      identifiers = ["lambda.amazonaws.com"]
-    }
-
-    resources = [aws_secretsmanager_secret.ec2_schedule_exceptions.arn]
-  }
-
-  /*
-  statement {
-    sid    = "ReadWriteAccessFromTeam"
-    effect = "Allow"
-
-    actions = [
-      "secretsmanager:GetSecretValue",
-      "secretsmanager:DescribeSecret",
-      "secretsmanager:PutSecretValue",
-    ]
-
-    principals {
-      type        = "AWS"
-      identifiers = var.aws_accounts_arn
-    }
-
-    resources = [aws_secretsmanager_secret.ec2_schedule_exceptions.arn]
-  }
-  */
-}
+#resource "aws_secretsmanager_secret" "ec2_schedule_exceptions" {
+#  name        = var.scheduler_exclude_ec2_ids_from_secrets_manager
+#  description = "Exception list for EC2 scheduled."
+#}
+#
+#resource "aws_secretsmanager_secret_policy" "ec2_schedule_exceptions" {
+#  secret_arn = aws_secretsmanager_secret.ec2_schedule_exceptions.arn
+#  policy     = data.aws_iam_policy_document.ec2_schedule_exceptions.json
+#}
+#
+#data "aws_iam_policy_document" "ec2_schedule_exceptions" {
+#
+#  statement {
+#    sid    = "ReadFromLambda"
+#    effect = "Allow"
+#
+#    actions = [
+#      "secretsmanager:GetSecretValue",
+#    ]
+#
+#    principals {
+#      type        = "Service"
+#      identifiers = ["lambda.amazonaws.com"]
+#    }
+#
+#    resources = [aws_secretsmanager_secret.ec2_schedule_exceptions.arn]
+#  }
+#
+#  /*
+#  statement {
+#    sid    = "ReadWriteAccessFromTeam"
+#    effect = "Allow"
+#
+#    actions = [
+#      "secretsmanager:GetSecretValue",
+#      "secretsmanager:DescribeSecret",
+#      "secretsmanager:PutSecretValue",
+#    ]
+#
+#    principals {
+#      type        = "AWS"
+#      identifiers = var.aws_accounts_arn
+#    }
+#
+#    resources = [aws_secretsmanager_secret.ec2_schedule_exceptions.arn]
+#  }
+#  */
+#}

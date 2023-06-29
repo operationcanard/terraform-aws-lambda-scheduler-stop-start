@@ -51,6 +51,7 @@ def lambda_handler(event, context):
         except Exception as err:
             logging.error(f"Invalid json answer: {err}")
 
+    '''
     if os.getenv("EXCLUDE_EC2_IDS_FROM_SECRETS_MANAGER", None):
         try:
             exceptions_in_secrets_manager = GetExceptionSecrets(region_name="eu-west-1")
@@ -61,6 +62,7 @@ def lambda_handler(event, context):
             logging.info(f"Exclude Instances ids list from secrets manager : {to_exclude_secret_manager}")
         except Exception as err:
             logging.error(f"Invalid json answer: {err}")
+    '''
 
     _strategy = {}
     _strategy[AutoscalingScheduler] = os.getenv("AUTOSCALING_SCHEDULE")
