@@ -250,25 +250,16 @@ locals {
 #
 ################################################
 
-resource "null_resource" "move_directory" {
-  provisioner "local-exec" {
-    command = "cp -R ${path.module}/src/package/* ${path.module}/src/scheduler/"
-  }
-}
-
 # Convert *.py to .zip because AWS Lambda need .zip
-data "archive_file" "this" {
-  type        = "zip"
-  output_path = "${path.module}/aws-stop-start-resources-3.1.3.zip"
-  source_dir  = "${path.module}/src/"
-  depends_on = [
-    null_resource.move_directory
-  ]
-}
+#data "archive_file" "this" {
+#  type        = "zip"
+#  output_path = "${path.module}/aws-stop-start-resources-3.1.3.zip"
+#  source_dir  = "${path.module}/src/"
+#}
 
 # Create Lambda function for stop or start aws resources
 resource "aws_lambda_function" "this" {
-  filename      = data.archive_file.this.output_path
+  filename      = "${path.module}/src/aws-stop-start-resources-3.1.3.zip"
   function_name = var.name
   role          = var.custom_iam_role_arn == null ? aws_iam_role.this[0].arn : var.custom_iam_role_arn
   handler       = "scheduler.main.lambda_handler"
