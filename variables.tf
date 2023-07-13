@@ -1,8 +1,9 @@
 # Terraform variables file
 
 # Set cloudwatch events for shutingdown instances
-# trigger lambda functuon every night at 22h00 from Monday to Friday
+# tp trigger lambda function every night at 22h00 from Monday to Friday
 # cf doc : https://docs.aws.amazon.com/lambda/latest/dg/tutorial-scheduled-events-schedule-expressions.html
+
 variable "cloudwatch_schedule_expression" {
   description = "Define the aws cloudwatch event rule schedule expression"
   type        = string
@@ -12,6 +13,12 @@ variable "cloudwatch_schedule_expression" {
 variable "name" {
   description = "Define name to use for lambda function, cloudwatch event and iam role"
   type        = string
+}
+
+variable "desc" {
+  description = "Description to lambda function"
+  type        = string
+  default     = null
 }
 
 variable "custom_iam_role_arn" {
@@ -38,44 +45,25 @@ variable "schedule_action" {
   default     = "stop"
 }
 
-variable "resources_tag" {
-  # This variable has been renamed to "scheduler_tag"
-  description = "DEPRECATED, use scheduler_tag variable instead"
-  type        = map(string)
-  default     = null
-}
-
 variable "scheduler_tag" {
   description = "Set the tag to use for identify aws resources to stop or start"
   type        = map(string)
 
   default = {
-    "key"   = "tostop"
+    "key"   = "to_stop"
     "value" = "true"
   }
-}
-
-variable "scheduler_exclude_ec2_ids" {
-  description = "List of instance IDS to exclude temporary of the schedule"
-  type        = list(string)
-  default     = null
-}
-
-variable "scheduler_exclude_ec2_ids_from_url" {
-  description = "URL giving the list of instance IDs to exclude temporary of the schedule"
-  type        = string
-  default     = null
-}
-
-variable "scheduler_exclude_ec2_ids_from_secrets_manager" {
-  description = "Secret name with IDs to exclude temporary of the schedule"
-  type        = string
-  default     = "ec2-scheduler-exceptions"
 }
 
 variable "autoscaling_schedule" {
   description = "Enable scheduling on autoscaling resources"
   type        = any
+  default     = false
+}
+
+variable "autoscaling_terminate_instances" {
+  description = "Terminate instances when autoscaling group is scheduled to stop"
+  type        = bool
   default     = false
 }
 
@@ -98,9 +86,21 @@ variable "rds_schedule" {
   default     = false
 }
 
+variable "redshift_schedule" {
+  description = "Enable scheduling on redshift resources"
+  type        = bool
+  default     = false
+}
+
+variable "documentdb_schedule" {
+  description = "Enable scheduling on documentdb resources"
+  type        = bool
+  default     = false
+}
+
 variable "cloudwatch_alarm_schedule" {
   description = "Enable scheduling on cloudwatch alarm resources"
-  type        = any
+  type        = bool
   default     = false
 }
 

@@ -7,7 +7,7 @@
 rm ./aws-stop-start-resources-3.1.3.zip
 
 ## Download packages
-pip3 install --target ./packages --upgrade requests validators urllib3 botocore moto
+pip3 install --target ./packages --upgrade urllib3 botocore moto
 
 ## Pack everything
 cd packages

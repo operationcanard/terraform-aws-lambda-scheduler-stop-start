@@ -1,10 +1,9 @@
 """Autoscaling instances scheduler."""
 
-from typing import List
-
 import boto3
 from botocore.exceptions import ClientError
 from ..ec2.exceptions import ec2_exception
+
 
 class AwsWaiters:
     """Abstract aws waiter in a class."""

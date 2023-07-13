@@ -4,9 +4,8 @@ from typing import Dict, List
 
 import boto3
 from botocore.exceptions import ClientError
-from scheduler.rds.exceptions import rds_exception
-from scheduler.libs.filter_resources_by_tags import FilterByTags
-
+from .exceptions import rds_exception
+from ..libs.filter_resources_by_tags import FilterByTags
 
 class RdsScheduler:
     """Abstract rds scheduler in a class."""

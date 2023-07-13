@@ -19,4 +19,6 @@ def cloudwatch_exception(resource_name: str, resource_id: str, exception: Client
     :param str exception:
         Human-readable string describing the exception
     """
-    logging.error(f"{resource_name} {resource_id}: {exception.response['Error']['Message']}")
+    logging.error(
+        f"{resource_name} {resource_id}: {exception.response['Error']['Message']}"
+    )

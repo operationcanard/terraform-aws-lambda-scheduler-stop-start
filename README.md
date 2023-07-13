@@ -56,13 +56,6 @@ module "start_ec2_instance" {
 }
 ```
 
-## Examples
-
-*   [Autoscaling scheduler](https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/tree/master/examples/autoscaling-scheduler) - Create lambda functions to suspend autoscaling group with tag `tostop = true` and terminate its ec2 instances on Friday at 23:00 Gmt and start them on Monday at 07:00 GMT
-*   [EC2 scheduler](https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/tree/master/examples/ec2-scheduler) - Create lambda functions to stop ec2 with tag `tostop = true` on Friday at 23:00 Gmt and start them on Monday at 07:00 GMT
-*   [Rds aurora - mariadb scheduler](https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/tree/master/examples/rds-scheduler) - Create lambda functions to stop rds mariadb and aurora cluster with tag `tostop = true` on Friday at 23:00 Gmt and start them on Monday at 07:00 GMT
-*   [test fixture](https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/tree/master/examples/test_fixture) - Deploy environment for testing module
-
 ## Inputs
 
 | Name | Description | Type | Default | Required |
@@ -103,55 +96,9 @@ In order to run tests that access your AWS account, you will need to configure y
 credentials](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html). For example, you could
 set the credentials as the environment variables `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`.
 
-### Integration tests
-
-Integration tests are realized with python `boto3` and `pytest` modules.
-
-Install Python dependency:
-
-```shell
-python3 -m pip install -r requirements-dev.txt
-```
-
-```shell
-# Test python code use by instance scheduler scheduler
-python3 -m pytest -n 4 --cov=package tests/integration/test_instance_scheduler.py
-
-# Test python code use by autoscaling scheduler
-python3 -m pytest -n 4 --cov=package tests/integration/test_asg_scheduler.py
-
-# Test python code use by rds scheduler
-python3 -m pytest -n 8 --cov=package tests/integration/test_rds_scheduler.py
-
-# Test pythn code use by cloudwatch alarm scheduler
-python3 -m pytest -n 12 --cov=package tests/integration/test_cloudwatch_alarm_scheduler.py
-
-# Test all python code
-python3 -m pytest -n 30 --cov=package tests/integration/
-```
-
-### End-to-end tests
-
-This module has been packaged with [Terratest](https://github.com/gruntwork-io/terratest) to tests this Terraform module.
-
-Install Terratest with depedencies:
-
-```shell
-# Prerequisite: install Go
-go get ./...
-```
-
-```shell
-# Test instance scheduler
-go test -timeout 900s -v tests/end-to-end/instance_scheduler_test.go
-
-# Test autoscaling scheduler
-go test -timeout 900s -v tests/end-to-end/autoscaling_scheduler_test.go
-```
-
 ## Authors
-
-Modules managed by [diodonfrost](https://github.com/diodonfrost)
+- Original Author [diodonfrost](https://github.com/diodonfrost)
+- Version by ThomasGSP
 
 ## Licence
 

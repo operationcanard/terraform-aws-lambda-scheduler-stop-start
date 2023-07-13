@@ -23,7 +23,7 @@ class AutoscalingScheduler:
             self.asg = boto3.client("autoscaling")
         self.waiter = AwsWaiters(region_name=region_name)
 
-    def stop(self, aws_tags: list[dict]) -> None:
+    def stop(self, aws_tags: List[Dict], terminate_instances=False) -> None:
         """Aws autoscaling suspend function.
 
         Suspend autoscaling group and stop its instances
@@ -40,6 +40,8 @@ class AutoscalingScheduler:
                     ]
                 }
             ]
+        :param bool terminate_instances:
+            Terminate autoscaling instances if True
         """
         tag_key = aws_tags[0]["Key"]
         tag_value = "".join(aws_tags[0]["Values"])
@@ -53,15 +55,19 @@ class AutoscalingScheduler:
             except ClientError as exc:
                 ec2_exception("instance", asg_name, exc)
 
-        # Stop autoscaling instance
+        # Stop or Terminate autoscaling instances
         for instance_id in instance_id_list:
             try:
-                self.ec2.stop_instances(InstanceIds=[instance_id])
-                print(f"Stop autoscaling instances {instance_id}")
+                if terminate_instances:
+                    self.ec2.terminate_instances(InstanceIds=[instance_id])
+                    print(f"Terminate autoscaling instances {instance_id}")
+                else:
+                    self.ec2.stop_instances(InstanceIds=[instance_id])
+                    print(f"Stop autoscaling instances {instance_id}")
             except ClientError as exc:
                 ec2_exception("autoscaling group", instance_id, exc)
 
-    def start(self, aws_tags: list[dict]) -> None:
+    def start(self, aws_tags: List[Dict]) -> None:
         """Aws autoscaling resume function.
 
         Resume autoscaling group and start its instances
@@ -104,7 +110,7 @@ class AutoscalingScheduler:
             except ClientError as exc:
                 ec2_exception("autoscaling group", asg_name, exc)
 
-    def list_groups(self, tag_key: str, tag_value: str) -> list[str]:
+    def list_groups(self, tag_key: str, tag_value: str) -> List[str]:
         """Aws autoscaling list function.
 
         List name of all autoscaling groups with
@@ -128,7 +134,7 @@ class AutoscalingScheduler:
                         asg_name_list.append(group["AutoScalingGroupName"])
         return asg_name_list
 
-    def list_instances(self, asg_name_list: list[str]) -> Iterator[str]:
+    def list_instances(self, asg_name_list: List[str]) -> Iterator[str]:
         """Aws autoscaling instance list function.
 
         List name of all instances in the autoscaling groups

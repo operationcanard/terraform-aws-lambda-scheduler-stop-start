@@ -3,7 +3,9 @@ import json
 import boto3
 from botocore.exceptions import ClientError
 
-
+"""
+Not used by maybe useful in the future.
+"""
 class GetExceptionSecrets:
     def __init__(self, region_name=None) -> None:
         """Initialize secretsmanager ."""
@@ -23,5 +25,5 @@ class GetExceptionSecrets:
             raise e
 
         # Decrypts secret using the associated KMS key.
-        secret = get_secret_value_response['SecretString']
+        secret = get_secret_value_response["SecretString"]
         return json.loads(secret).keys()

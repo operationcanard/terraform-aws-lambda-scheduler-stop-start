@@ -24,22 +24,13 @@ def rds_exception(resource_name: str, resource_id: str, exception: ClientError) 
 
     if exception.response["Error"]["Code"] in info_codes:
         logging.info(
-            "%s %s: %s",
-            resource_name,
-            resource_id,
-            exception,
+            f"{resource_name} {resource_id}: {exception.response['Error']['Message']}"
         )
     elif exception.response["Error"]["Code"] in warning_codes:
         logging.warning(
-            "%s %s: %s",
-            resource_name,
-            resource_id,
-            exception,
+            f"{resource_name} {resource_id}: {exception.response['Error']['Message']}"
         )
     else:
         logging.error(
-            "Unexpected error on %s %s: %s",
-            resource_name,
-            resource_id,
-            exception,
+            f"{resource_name} {resource_id}: {exception.response['Error']['Message']}"
         )

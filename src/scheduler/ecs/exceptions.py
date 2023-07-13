@@ -28,8 +28,14 @@ def ecs_exception(resource_name: str, resource_id: str, exception: ClientError) 
     ]
 
     if exception.response["Error"]["Code"] in info_codes:
-        logging.info(f"{resource_name} {resource_id}: {exception.response['Error']['Message']}")
+        logging.info(
+            f"{resource_name} {resource_id}: {exception.response['Error']['Message']}"
+        )
     elif exception.response["Error"]["Code"] in warning_codes:
-        logging.warning(f"{resource_name} {resource_id}: {exception.response['Error']['Message']}")
+        logging.warning(
+            f"{resource_name} {resource_id}: {exception.response['Error']['Message']}"
+        )
     else:
-        logging.error(f"{resource_name} {resource_id}: {exception.response['Error']['Message']}")
+        logging.error(
+            f"{resource_name} {resource_id}: {exception.response['Error']['Message']}"
+        )
